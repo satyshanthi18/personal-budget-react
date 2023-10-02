@@ -22,21 +22,38 @@ function HomePage() {
         ],
         labels: []
         }
+    const ChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false, 
+            width: 300,
+            height: 300
+          };
+  useEffect(() => {
+    axios.get("http://localhost:3001/budget")
+    .then(res => {
+        console.log(res.data)
+        for (var i = 0; i < res.data.budget.length; i++) {
+            data.labels.push(res.data.budget[i].title);
+            data.datasets[0].data.push(res.data.budget[i].budget);
+        }
+        createChart()
+        createD3Chart()
+        
+    })
+  }, [])
 
     const createChart = () => {
         var ctx = document.getElementById("myChart");
-        const w = 350;
-        const h = 300;
+       
         const myPieChart = new Chart(ctx, {
             type: 'pie',
             data: data,
-            width: w,
-            height: h
+            options: ChartOptions
         });
       }
 
     const createD3Chart = () => {
-        const w = 350;
+        const w = 300;
         const h = 300;
         const r = Math.min(w, h) / 2;
   
@@ -61,21 +78,6 @@ function HomePage() {
           .attr('text-anchor', 'middle')
           .text((d, i) => data.labels[i]);
     };
-
-
-  useEffect(() => {
-    axios.get("http://localhost:3001/budget")
-    .then(res => {
-        console.log(res.data)
-        for (var i = 0; i < res.data.budget.length; i++) {
-            data.labels.push(res.data.budget[i].title);
-            data.datasets[0].data.push(res.data.budget[i].budget);
-        }
-        createD3Chart()
-        createChart()
-    })
-  }, [])
-
 
   return (
     <main className="center" id="main">
@@ -106,10 +108,10 @@ function HomePage() {
             </p>
         </div>
 
-        <div className="text-box">
+        <div>
             <h1>Chart</h1>
             <p>
-                <canvas id="myChart"></canvas>
+            <canvas id="myChart" ></canvas>
             </p>
         </div>
 
